@@ -2,16 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Usuario;
-use App\Models\Rol;
+use App\Models\Cuenta;
+use App\Models\Perfil;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Http\Requests\UsuariosRequest;
+use App\Http\Requests\CuentasRequest;
 use App\Http\Requests\CambiarContrasenaRequest;
 use Illuminate\Support\Facades\Hash;
 use Gate;
 
-class UsuariosController extends Controller
+class CuentasController extends Controller
 {
     public function __construct(){
         $this->middleware('auth')->except(['autenticar','logout']);
@@ -20,23 +20,22 @@ class UsuariosController extends Controller
     // Autenticar usuario
     public function autenticar(Request $request)
     {
-        $email = $request->email;
+        $user = $request->user;
         $password = $request->password;
-        
-        if(Auth::attempt(['email'=>$email,'password'=>$password,'activo'=>true])){
-            Auth::user()->registraUltimoLogin();
+
+        if(Auth::attempt(['user'=>$user,'password'=>$password])){
             return redirect()->route('home.index');
         }
 
         return back()->withErrors([
-            'email' => 'Credenciales Incorrectas',
-        ])->onlyInput('email');
+            'user' => 'Usuario o contraseña incorrectos.',
+        ])->onlyInput('user');
     }
 
     //Cerrar sesión
     public function logout(){
         Auth::logout();
-        return redirect()->route('home.login');
+        return redirect()->route('home.index');
     }
 
     //Display a listing of the resource.
@@ -115,11 +114,11 @@ class UsuariosController extends Controller
         if(Gate::denies('es_Admin')){
             return redirect()->route('home.index');
         }
-        
+
         if($usuario!=Auth::user()){
             $usuario->delete();
         }
-        
+
         return redirect()->route('usuarios.index');
     }
 }

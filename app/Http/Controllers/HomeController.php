@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Imagen;
 
 class HomeController extends Controller
 {
@@ -11,7 +12,8 @@ class HomeController extends Controller
     }
 
     public function index(){
-        return view('home.index');
+        $imagenes = Imagen::all();
+        return view('home.index', compact('imagenes'));
     }
 
     public function login(){
