@@ -9,12 +9,15 @@
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <a class="navbar-brand" href="#">Photorama</a>
+        <a class="navbar-brand" href="{{route('home.index')}}">Photorama</a>
         <div id="navbarSupportedContent">
             <ul class="navbar-nav mr-auto">
                 @if(Auth::check())
                 <li class="nav-item">
                     <a class="nav-link" href="{{-- artista.fotos --}}">{{Auth::user()->nombre}} {{Auth::user()->apellido}}</a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{route('cuentas.logout')}}" class="nav-link">Cerrar Sesión</a>
                 </li>
                 @else
                 <li class="nav-item">
