@@ -1,7 +1,7 @@
 @extends('templates.master')
 @section('title') LOGIN @endsection
 @section('main-content')
-<div class="container" style="margin-top: 20%">
+<div class="container">
     <div class="row justify-content-center">
       <div class="col-lg-4 col-md-6">
         @if($errors->any())

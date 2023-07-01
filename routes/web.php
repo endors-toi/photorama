@@ -23,6 +23,7 @@ Route::delete('/admin/artistas/{cuenta}', [CuentasController::class, 'destroy'])
 
 //Rutas para el Artista
 Route::get('/artista', [CuentasController::class, 'indexArtista'])->name('artista.index');
+Route::get('/artista/imagenes/create', [CuentasController::class, 'createArtista'])->name('artista.create');
 Route::post('/artista/imagenes', [CuentasController::class, 'storeArtista'])->name('artista.store');
 Route::get('/artista/imagenes/{id}/edit', [CuentasController::class, 'editArtista'])->name('artista.edit');
 Route::put('/artista/imagenes/{id}', [CuentasController::class, 'updateArtista'])->name('artista.update');

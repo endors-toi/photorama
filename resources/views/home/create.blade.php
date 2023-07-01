@@ -1,7 +1,7 @@
 @extends('templates.master')
 @section('title') Register @endsection
 @section('main-content')
-<div class="container" style="margin-top: 20%">
+<div class="container">
     <div class="row justify-content-center">
       <div class="col-lg-4 col-md-6">
         @if($errors->any())
@@ -18,7 +18,6 @@
         <div class="card-body">
             <form method="POST" action="{{ route('admin.store') }}">
                 @csrf
-            
                 {{-- Usuario --}}
                 <div class="mb-3">
                     <label for="user" class="form-label">Usuario</label>

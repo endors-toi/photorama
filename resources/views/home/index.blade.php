@@ -20,15 +20,15 @@
         <div class="col">
             @foreach($imagenes as $imagen)
             <div class="card" style="width: 18rem;">
-                <img class="card-img-top" src="{{$imagen->archivo}}" alt="Card image cap">
+                <img class="card-img-top" src="{{ asset('storage/' . $imagen->archivo) }}" alt="Card image cap">
                 <div class="card-body">
                     <h5 class="card-title">{{$imagen->titulo}}</h5>
-                    <p class="card-text">Por: {{$imagen->cuenta_user->nombre}} {{$imagen->cuenta_user->apellido}}</p>
+                    <p class="card-text">Por: {{$imagen->cuentas->nombre}} {{$imagen->cuentas->apellido}}</p>
                 </div>
-                </div>
+            </div>
             @endforeach
         </div>
         @endif
-    </div>
+    </div>    
 </div>
 @endsection

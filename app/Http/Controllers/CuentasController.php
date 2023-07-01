@@ -8,8 +8,10 @@ use App\Models\Imagen;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\CuentasRequest;
+use App\Http\Requests\ImagenesRequest;
 use App\Http\Requests\CambiarContrasenaRequest;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Gate;
 
 class CuentasController extends Controller
@@ -124,8 +126,73 @@ class CuentasController extends Controller
     public function indexArtista(Cuenta $cuenta)
     {   
         // Accede a las imágenes asociadas a la cuenta
-        $imagenes = $cuenta->imagenes; 
+        $cuenta = Auth::user()->user;
+        $imagenes = Imagen::where('cuenta_user', $cuenta)->get(); 
 
         return view('artista.index', compact('imagenes'));
+    }
+
+    public function createArtista()
+    {
+        return view('artista.create');
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function storeArtista(ImagenesRequest $request)
+    {
+        $archivo = $request->file('archivo');
+        $pathCarpeta = 'public/' . $request->input('cuenta_user');
+        $nombreArchivo = $archivo->getClientOriginalName();
+        $pathArchivo = $archivo->storeAs($pathCarpeta, $nombreArchivo, 'local');
+        
+        $imagen = new Imagen;
+        $imagen->titulo = $request->input('titulo');
+        $imagen->baneada = $request->input('baneada') ?? false;
+        $imagen->motivo_ban = $request->input('motivo_ban') ?? null;
+        $imagen->cuenta_user = $request->input('cuenta_user');
+        $imagen->archivo = $pathArchivo;
+        $imagen->save();
+
+        return redirect()->route('artista.index');
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function editArtista(Cuenta $cuenta)
+    {
+        if(Gate::denies('es_Admin')){
+            return redirect()->route('home.index');
+        }
+        return view('admin.edit', compact('cuenta'));
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function updateArtista(Request $request, Cuenta $cuenta)
+    {
+        $cuenta->nombre = $request->nombre;
+        $cuenta->apellido = $request->apellido;
+        $cuenta->save();
+        return redirect()->route('admin.index');
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroyArtista(Cuenta $cuenta)
+    {
+        if (Gate::allows('es_Admin')) {
+            return redirect()->route('home.index');
+        }
+
+        if ($cuenta->user != Auth::user()->user) {
+            $cuenta->delete();
+        }
+
+        return redirect()->route('admin.index');
     }
 }
