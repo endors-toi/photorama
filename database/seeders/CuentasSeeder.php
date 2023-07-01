@@ -18,7 +18,7 @@ class CuentasSeeder extends Seeder
             ['user' => 'user1', 'password' => Hash::make('password123'), 'nombre' => 'John', 'apellido' => 'Doe', 'perfil_id' => 1],
             ['user' => 'user2', 'password' => Hash::make('password123'), 'nombre' => 'Jane', 'apellido' => 'Doe', 'perfil_id' => 2],
             ['user' => 'user3', 'password' => Hash::make('password123'), 'nombre' => 'Mary', 'apellido' => 'Smith', 'perfil_id' => 1],
-            ['user' => 'user4', 'password' => Hash::make('password123'), 'nombre' => 'Peter', 'apellido' => 'Jones', 'perfil_id' => 2],
+            ['user' => 'user4', 'password' => Hash::make('123'), 'nombre' => 'Peter', 'apellido' => 'Jones', 'perfil_id' => 2],
             ['user' => 'user5', 'password' => Hash::make('password123'), 'nombre' => 'Susan', 'apellido' => 'Brown', 'perfil_id' => 2],
             ['user' => 'user6', 'password' => Hash::make('password123'), 'nombre' => 'David', 'apellido' => 'Williams', 'perfil_id' => 1],
             ['user' => 'user7', 'password' => Hash::make('password123'), 'nombre' => 'Emily', 'apellido' => 'Green', 'perfil_id' => 2],

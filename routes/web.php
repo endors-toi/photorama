@@ -8,6 +8,7 @@ use App\Http\Controllers\ImagenesController;
 // Ruta para el Home
 Route::get('/',[HomeController::class,'index'])->name('home.index')->middleware('web');
 Route::get('/login',[HomeController::class,'login'])->name('home.login');
+Route::get('/filtro',[HomeController::class,'indexFiltrado'])->name('home.filtro');
 
 // Rutas de autenticación
 Route::post('/login',[CuentasController::class,'autenticar'])->name('cuentas.autenticar');
@@ -29,4 +30,7 @@ Route::get('/artista/imagenes/{id}/edit', [CuentasController::class, 'editArtist
 Route::put('/artista/imagenes/{id}', [CuentasController::class, 'updateArtista'])->name('artista.update');
 Route::delete('/artista/imagenes/{id}', [CuentasController::class, 'destroyArtista'])->name('artista.destroy');
 
-
+// IMG
+Route::put('/imagen/{id}/ban', [ImagenesController::class, 'ban'])->name('imagenes.ban');
+Route::put('/imagen/{id}/desban', [ImagenesController::class, 'desban'])->name('imagenes.desban');
+Route::delete('/imagen/{id}/destroy', [ImagenesController::class, 'destroy'])->name('imagenes.destroy');

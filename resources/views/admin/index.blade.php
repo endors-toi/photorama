@@ -52,14 +52,16 @@
                     <td class="align-middle">{{$cuenta->user}}</td>
                     <td class="align-middle">{{$cuenta->nombre}}</td>
                     <td class="align-middle">{{$cuenta->apellido}}</td>
-                    <td class="align-middle">{{$cuenta->perfil_id}}</td>
+                    <td class="align-middle">{{$cuenta->perfiles->nombre}}</td>
                     <td>
                         <div class="row">
                             {{-- borrar --}}
+                            @if($cuenta->user != Auth::user()->user)
                             <button type="button" class="btn btn-sm btn-danger" data-toggle="modal" data-target="#borrarModal{{$cuenta->user}}">
                                 Borrar
                             </button>
-                            
+                            @endif
+
                             <!-- Modal -->
                             <div class="modal fade" id="borrarModal{{$cuenta->user}}" tabindex="-1" role="dialog" aria-labelledby="borrarModalLabel{{$cuenta->user}}" aria-hidden="true">
                                 <div class="modal-dialog modal-dialog-centered" role="document">
@@ -74,8 +76,8 @@
                                             @method('delete')
                                             @csrf
                                             <div class="modal-body">
-                                                <p>Desea eliminar a {{$cuenta->nombre}} del sistema?</p>
-                                                <p>Esta accion es permanente!</p>
+                                                <p>¿Desea eliminar a {{$cuenta->nombre}} del sistema?</p>
+                                                <h5>¡Esta accion es permanente!</h5>
                                             </div>
                                             <div class="modal-footer">
                                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
@@ -106,7 +108,66 @@
     </div>
     {{-- Imagenes --}}
     <div class="col">
-        Fotos:
+        @if($imagenes->isEmpty())
+        <div class="col-12 d-flex justify-content-center">
+            <h5 style="margin-top:10%">¡Aún no hay imágenes! Invita artistas :P</h5>
+        </div>
+        @else
+        <div class="col">
+            @foreach($imagenes as $imagen)
+            <div class="card" style="width: 18rem;">
+                <img class="card-img-top" src="{{asset($imagen->archivo)}}" alt="Card image cap">
+                <div class="card-body">
+                    <h5 class="card-title">{{$imagen->titulo}}</h5>
+                    @if($imagen->baneada)
+                    <form method="POST" action="{{route('imagenes.desban', $imagen->id)}}">
+                        @csrf
+                        @method('put')
+                        <button class="btn btn-warning"type="submit">DESBAN</button>
+                    </form>
+                    @else
+                    <form method="POST" action="{{route('imagenes.ban', $imagen->id)}}">
+                        @csrf
+                        @method('put')
+                        <input class="form-control" type="text" id="motivo" name="motivo" placeholder="Motivo de Ban">
+                        <button type="button" class="btn btn-sm btn-danger" data-toggle="modal" data-target="#banModal{{$imagen->id}}">
+                            BAN
+                        </button>
+
+                        <!-- Modal -->
+                        <div class="modal fade" id="banModal{{$imagen->id}}" tabindex="-1" role="dialog" aria-labelledby="banModalLabel{{$imagen->id}}" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="banModalLabel{{$imagen->id}}">Confirmar Ban</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <form method="POST" action="{{route('imagenes.ban',$imagen->id)}}">
+                                        @method('put')
+                                        @csrf
+                                        <div class="modal-body">
+                                            <p>¿Confirma banear esta imagen?</p>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                                            <button type="submit" class="btn btn-sm btn-danger">
+                                                <span class="material-symbols-outlined">BANEAR</span>
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    @endif
+                    <p class="card-text">Por: {{$imagen->cuentas->nombre}} {{$imagen->cuentas->apellido}}</p>
+                </div>
+            </div>
+            @endforeach
+        </div>
+        @endif
     </div>
 </div>
 @endsection

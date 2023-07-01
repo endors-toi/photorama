@@ -16,21 +16,21 @@
                 <div class="card">
                     <div class="card-header bg-dark text-white">Ingrese los nuevos datos</div>
                     <div class="card-body">
-                        <form method="POST" action="{{ route('artista.update', ['id' => $imagen->id]) }}">
+                        <form method="POST" action="{{ route('artista.update', $imagen->id) }}">
                             @csrf
                             @method('PUT')
-                            
+
                             <div class="mb-3">
                                 <label for="titulo" class="form-label">Titulo</label>
-                                <input type="text" id="titulo" name="titulo" class="form-control">
+                                <input type="text" id="titulo" name="titulo" class="form-control" placeholder="{{$imagen->titulo}}">
                             </div>
-                        
+
                             {{-- botones --}}
                             <div class="mb-3 d-grid gap-2 d-lg-block">
                                 <button class="btn btn-success" type="submit">Actualizar</button>
                             </div>
                         </form>
-                        
+
                     </div>
                 </div>
             </div>

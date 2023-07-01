@@ -9,7 +9,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\CuentasRequest;
 use App\Http\Requests\ImagenesRequest;
-use App\Http\Requests\CambiarContrasenaRequest;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Gate;
@@ -97,7 +96,7 @@ class CuentasController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Cuenta $cuenta)
+    public function update(CuentasRequest $request, Cuenta $cuenta)
     {
         $cuenta->nombre = $request->nombre;
         $cuenta->apellido = $request->apellido;
@@ -124,10 +123,10 @@ class CuentasController extends Controller
     //Artista
     //Display a listing of the resource.
     public function indexArtista(Cuenta $cuenta)
-    {   
+    {
         // Accede a las imágenes asociadas a la cuenta
         $cuenta = Auth::user()->user;
-        $imagenes = Imagen::where('cuenta_user', $cuenta)->get(); 
+        $imagenes = Imagen::where('cuenta_user', $cuenta)->get();
 
         return view('artista.index', compact('imagenes'));
     }
@@ -143,16 +142,17 @@ class CuentasController extends Controller
     public function storeArtista(ImagenesRequest $request)
     {
         $archivo = $request->file('archivo');
-        $pathCarpeta = 'public/' . $request->input('cuenta_user');
+        $user = $request->input('cuenta_user');
+        $pathCarpeta = 'public/' . $user;
         $nombreArchivo = $archivo->getClientOriginalName();
         $pathArchivo = $archivo->storeAs($pathCarpeta, $nombreArchivo, 'local');
-        
+
         $imagen = new Imagen;
         $imagen->titulo = $request->input('titulo');
         $imagen->baneada = $request->input('baneada') ?? false;
         $imagen->motivo_ban = $request->input('motivo_ban') ?? null;
-        $imagen->cuenta_user = $request->input('cuenta_user');
-        $imagen->archivo = $pathArchivo;
+        $imagen->cuenta_user = $user;
+        $imagen->archivo = 'storage/' . $user . '/' . $nombreArchivo;
         $imagen->save();
 
         return redirect()->route('artista.index');
@@ -161,20 +161,21 @@ class CuentasController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function editArtista(Imagen $imagen)
+    public function editArtista($id)
     {
-        
+        $imagen = Imagen::find($id);
         return view('artista.edit', compact('imagen'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function updateArtista(Request $request, Imagen $imagen)
+    public function updateArtista(Request $request, $id)
     {
+        $imagen = Imagen::find($id);
         $imagen->titulo = $request->titulo;
         $imagen->save();
-        
+
         return redirect()->route('artista.index');
     }
 

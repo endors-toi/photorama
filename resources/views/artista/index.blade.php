@@ -15,34 +15,57 @@
     <div class="container">
         <div class="row">
             <div class="col-md-3">
-                <div class="card">
-                    <img class="card-img-top" src="https://via.placeholder.com/300" alt="Card image cap">
-                    <div class="card-body">
-                        <a href={{route('artista.create')}} class="btn btn-primary btn-add">
-                            <span class="fa fa-plus"> Agregar Imágenes</span>
-                        </a>
-                    </div>
-                </div>
+                <a href={{route('artista.create')}} class="btn btn-primary btn-add">
+                    <span class="fa fa-plus">Agregar Imágenes</span>
+                </a>
             </div>
             @if($imagenes->isEmpty())
             <div class="col-12 d-flex justify-content-center">
-                <h5 style="margin-top:10%">¡Aún no hay imágenes! :( Podrías subir una nueva :)</h5>
+                <h5 style="margin-top:10%">¡Aún no tienes imágenes! :(</h5>
             </div>
             @else
             <div class="col d-flex">
                 @foreach($imagenes as $imagen)
-                <div class="card" style="width: 18rem;">
-                    <img class="card-img-top" src="{{ asset('storage/' . $imagen->archivo) }}" alt="Card image cap">
+                <div class="card" style="width: 18rem; @if($imagen->baneada) background-color:lightpink @endif">
+                    <img class="card-img-top" src="{{asset($imagen->archivo)}}" alt="Card image cap">
                     <div class="card-body">
-                        <h5 class="card-title">{{$imagen->titulo}}</h5>
-                        <p class="card-text">Por: {{$imagen->cuentas->nombre}} {{$imagen->cuentas->apellido}}</p>
+                        <h5 class="card-title">{{$imagen->titulo}} @if($imagen->baneada) (BANEADA) @endif </h5>
+                        @if($imagen->baneada) <p class="card-text">Motivo Ban: {{$imagen->motivo_ban}}</p> @endif
                         <div class="flex">
-                            <a href="{{route('artista.edit', ['id'=>$imagen])}}" class="btn btn-primary btn-add">
+                            <a href="{{route('artista.edit', ['id'=>$imagen->id])}}" class="btn btn-primary btn-add">
                                 <span class="fa fa-plus">Editar</span>
                             </a>
-                            <a href="{{route('artista.destroy', ['id'=>$imagen])}}" class="btn btn-primary btn-add">
-                                <span class="fa fa-plus">Borrar</span>
-                            </a>
+                            <button type="button" class="btn btn-sm btn-danger" data-toggle="modal" data-target="#borrarModal{{$imagen->id}}">
+                                Borrar
+                            </button>
+
+                            <!-- Modal -->
+                            <div class="modal fade" id="borrarModal{{$imagen->id}}" tabindex="-1" role="dialog" aria-labelledby="borrarModalLabel{{$imagen->id}}" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="borrarModalLabel{{$imagen->id}}">Confirmar Eliminar</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <form method="POST" action="{{route('imagenes.destroy',$imagen->id)}}">
+                                            @method('delete')
+                                            @csrf
+                                            <div class="modal-body">
+                                                <p>¿Desea eliminar esta imagen?</p>
+                                                <h5>¡Esta accion es permanente!</h5>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                                                <button type="submit" class="btn btn-sm btn-danger">
+                                                    <span class="material-symbols-outlined">Confirmar Borrado</span>
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
