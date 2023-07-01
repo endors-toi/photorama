@@ -161,38 +161,32 @@ class CuentasController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function editArtista(Cuenta $cuenta)
+    public function editArtista(Imagen $imagen)
     {
-        if(Gate::denies('es_Admin')){
-            return redirect()->route('home.index');
-        }
-        return view('admin.edit', compact('cuenta'));
+        
+        return view('artista.edit', compact('imagen'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function updateArtista(Request $request, Cuenta $cuenta)
+    public function updateArtista(Request $request, Imagen $imagen)
     {
-        $cuenta->nombre = $request->nombre;
-        $cuenta->apellido = $request->apellido;
-        $cuenta->save();
-        return redirect()->route('admin.index');
+        $imagen->titulo = $request->titulo;
+        $imagen->save();
+        
+        return redirect()->route('artista.index');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroyArtista(Cuenta $cuenta)
+    public function destroyArtista(Imagen $imagen)
     {
-        if (Gate::allows('es_Admin')) {
-            return redirect()->route('home.index');
-        }
-
         if ($cuenta->user != Auth::user()->user) {
             $cuenta->delete();
         }
 
-        return redirect()->route('admin.index');
+        return redirect()->route('artista.index');
     }
 }

@@ -37,10 +37,10 @@
                         <h5 class="card-title">{{$imagen->titulo}}</h5>
                         <p class="card-text">Por: {{$imagen->cuentas->nombre}} {{$imagen->cuentas->apellido}}</p>
                         <div class="flex">
-                            <a href={{route('artista.edit')}} class="btn btn-primary btn-add">
+                            <a href="{{route('artista.edit', ['id'=>$imagen])}}" class="btn btn-primary btn-add">
                                 <span class="fa fa-plus">Editar</span>
                             </a>
-                            <a href={{route('artista.destroy')}} class="btn btn-primary btn-add">
+                            <a href="{{route('artista.destroy', ['id'=>$imagen])}}" class="btn btn-primary btn-add">
                                 <span class="fa fa-plus">Borrar</span>
                             </a>
                         </div>
