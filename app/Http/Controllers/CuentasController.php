@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Cuenta;
 use App\Models\Perfil;
+use App\Models\Imagen;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\CuentasRequest;
@@ -14,7 +15,7 @@ use Gate;
 class CuentasController extends Controller
 {
     public function __construct(){
-        $this->middleware('auth')->except(['autenticar','logout']);
+        $this->middleware('auth')->except(['autenticar','logout', 'create']);
     }
 
     // Autenticar usuario
@@ -23,8 +24,12 @@ class CuentasController extends Controller
         $user = $request->user;
         $password = $request->password;
 
-        if(Auth::attempt(['user'=>$user,'password'=>$password])){
-            return redirect()->route('home.index');
+        if (Auth::attempt(['user' => $user, 'password' => $password])) {
+            if (Gate::allows('es_Admin')) {
+                return redirect()->route('admin.index');
+            } else {
+                return redirect()->route('artista.index');
+            }
         }
 
         return back()->withErrors([
@@ -32,93 +37,95 @@ class CuentasController extends Controller
         ])->onlyInput('user');
     }
 
+
     //Cerrar sesión
     public function logout(){
         Auth::logout();
-        return redirect()->route('home.index');
+        return redirect()->route('home.login');
     }
 
     //Display a listing of the resource.
     public function index()
     {
-        if(Gate::denies('es_Admin')){
-            return redirect()->route('home.index');
+        if (Gate::allows('es_Admin')) {
+            $perfiles = Perfil::orderBy('nombre')->get();
+            $cuentas = Cuenta::orderBy('user')->get();
+            $imagenes = Imagen::all();
+            return view('admin.index', compact('cuentas', 'perfiles', 'imagenes'));
+        } else {
+            return redirect()->route('artista.index');
         }
-
-        $perfiles = Perfil::orderBy('nombre')->get();
-        $usuarios = Usuario::orderBy('nombre')->get();
-        return view('usuarios.index',compact(['usuarios','perfiles']));
     }
+
 
     /**
      * Show the form for creating a new resource.
      */
     public function create()
     {
-        return redirect()->route('usuarios.index');
+        return view('home.create');
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(UsuariosRequest $request)
+    public function store(CuentasRequest $request)
     {
-        $usuario = new Usuario();
-        $usuario->nombre = $request->nombre;
-        $usuario->email = $request->email;
-        $usuario->password = Hash::make($request->password);
-        $usuario->perfil_id = $request->perfil;
-        $usuario->save();
-        return redirect()->route('usuarios.index');
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Usuario $usuario)
-    {
-        $usuario = Usuario::findOrFail($id);
-        return view('mostrar un usuario en especifico', compact('usuario'));
+        $cuenta = new Cuenta();
+        $cuenta->user = $request->user;
+        $cuenta->nombre = $request->nombre;
+        $cuenta->apellido = $request->apellido;
+        $cuenta->password = Hash::make($request->password);
+        $cuenta->perfil_id = $request->perfil;
+        $cuenta->save();
+        return redirect()->route('admin.index');
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Usuario $usuario)
+    public function edit(Cuenta $cuenta)
     {
         if(Gate::denies('es_Admin')){
             return redirect()->route('home.index');
         }
-        return redirect()->route('usuarios.index');
+        return view('admin.edit', compact('cuenta'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UsuariosRequest $request, $id)
+    public function update(Request $request, Cuenta $cuenta)
     {
-        $usuario = Usuario::findOrFail($id);
-        $usuario->nombre = $request->nombre;
-        $usuario->email = $request->email;
-        $usuario->password = Hash::make($request->password);
-        $usuario->perfil_id = $request->perfil;
-        $usuario->save();
-        return redirect()->route('usuarios.index');
+        $cuenta->nombre = $request->nombre;
+        $cuenta->apellido = $request->apellido;
+        $cuenta->save();
+        return redirect()->route('admin.index');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Usuario $usuario)
+    public function destroy(Cuenta $cuenta)
     {
-        if(Gate::denies('es_Admin')){
+        if (Gate::denies('es_Admin')) {
             return redirect()->route('home.index');
         }
 
-        if($usuario!=Auth::user()){
-            $usuario->delete();
+        if ($cuenta->user != Auth::user()->user) {
+            $cuenta->delete();
         }
 
-        return redirect()->route('usuarios.index');
+        return redirect()->route('admin.index');
+    }
+
+    //Artista
+    //Display a listing of the resource.
+    public function indexArtista(Cuenta $cuenta)
+    {   
+        // Accede a las imágenes asociadas a la cuenta
+        $imagenes = $cuenta->imagenes; 
+
+        return view('artista.index', compact('imagenes'));
     }
 }

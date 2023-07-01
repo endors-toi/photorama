@@ -13,10 +13,9 @@ class PerfilesSeeder extends Seeder
      */
     public function run(): void
     {
-        DB::table('perfiles')->insert(
+        DB::table('perfiles')->insert([
             ['nombre' => 'ADMIN'],
             ['nombre' => 'ARTISTA'],
-            ['nombre' => 'PUBLICO'],
-        );
+        ]);
     }
 }

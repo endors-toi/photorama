@@ -23,30 +23,24 @@ class CuentasRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'user'=>'required|unique:cuentas,user',
             'nombre' => 'required|min:2|max:50',
-            'email' => 'required|email:rfc|unique:usuarios',
             'password' => 'bail|required|min:6|max:20|same:password2',
-            'perfil' => 'bail|required|integer|gte:1|exists:roles,id',
         ];
     }
 
     public function messages():array
     {
         return [
+            'user.required' => 'Indique el nick del usuario',
+            'nombre.unique' => 'El nick del usuario debe ser unico',
             'nombre.required' => 'Indique nombre del usuario',
             'nombre.min' => 'El nombre debe tener entre 2 y 50 caracteres',
             'nombre.max' => 'El nombre debe tener entre 2 y 50 caracteres',
-            'email.required' => 'Indique email del usuario',
-            'email.email' => 'Email no válido',
-            'email.unique' => 'El email indicado ya está asignado a otro usuario',
             'password.required' => 'Indique contraseña del usuario',
             'password.min' => 'La contraseña debe tener entre 6 y 20 caracteres',
             'password.max' => 'La contraseña debe tener entre 6 y 20 caracteres',
             'password.same' => 'Las contraseñas no coinciden',
-            'perfil.required' => 'Indique perfil del usuario',
-            'perfil.integer' => 'Perfil no válido',
-            'perfil.gte' => 'Perfil no válido',
-            'perfil.exists' => 'Perfil no válido',
         ];
     }
 }

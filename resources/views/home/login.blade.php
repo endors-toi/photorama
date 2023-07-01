@@ -13,7 +13,7 @@
         @endif
         <form method="POST" action="{{route('cuentas.autenticar')}}">
             @csrf
-            <h2 class="text-center mb-4">Bienvenido! :)</h2>
+            <h2 class="text-center mb-4">Bienvenido!</h2>
             <div class="form-group">
                 <label for="user">Nombre de Usuario</label>
                 <input type="text" class="form-control" id="user" name="user" placeholder="Ingresa tu usuario" required>

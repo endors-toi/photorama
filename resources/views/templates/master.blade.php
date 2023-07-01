@@ -14,7 +14,7 @@
             <ul class="navbar-nav mr-auto">
                 @if(Auth::check())
                 <li class="nav-item">
-                    <a class="nav-link" href="{{-- artista.fotos --}}">{{Auth::user()->nombre}} {{Auth::user()->apellido}}</a>
+                    <a class="nav-link" href="{{route('admin.index')}}">{{Auth::user()->nombre}} {{Auth::user()->apellido}}</a>
                 </li>
                 <li class="nav-item">
                     <a href="{{route('cuentas.logout')}}" class="nav-link">Cerrar Sesión</a>
@@ -22,6 +22,9 @@
                 @else
                 <li class="nav-item">
                     <a class="nav-link" href="{{route('home.login')}}">Iniciar Sesión</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{route('cuentas.create')}}">Registrarse</a>
                 </li>
                 @endif
             </ul>

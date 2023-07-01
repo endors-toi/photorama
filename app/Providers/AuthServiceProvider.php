@@ -22,8 +22,8 @@ class AuthServiceProvider extends ServiceProvider
     public function boot(): void
     {
         //Permite solo al admin ver
-        Gate::define('es_Admin',function($usuario){
-            return $usuario->perfil->nombre=='Administrador';
+        Gate::define('es_Admin',function($cuentas){
+            return $cuentas->perfiles->nombre=='ADMIN';
         });
     }
 }
