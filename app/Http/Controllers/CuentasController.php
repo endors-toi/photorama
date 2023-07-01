@@ -8,7 +8,9 @@ use App\Models\Imagen;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\CuentasRequest;
+use App\Http\Requests\EditarCuentaRequest;
 use App\Http\Requests\ImagenesRequest;
+use App\Http\Requests\EditarImagenRequest;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Gate;
@@ -96,8 +98,11 @@ class CuentasController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(CuentasRequest $request, Cuenta $cuenta)
+    public function update(EditarCuentaRequest $request, Cuenta $cuenta)
     {
+        if (Gate::denies('es_Admin')) {
+            return redirect()->route('home.index');
+        }
         $cuenta->nombre = $request->nombre;
         $cuenta->apellido = $request->apellido;
         $cuenta->save();
@@ -125,15 +130,23 @@ class CuentasController extends Controller
     public function indexArtista(Cuenta $cuenta)
     {
         // Accede a las imágenes asociadas a la cuenta
-        $cuenta = Auth::user()->user;
-        $imagenes = Imagen::where('cuenta_user', $cuenta)->get();
+        if(Gate::denies('es_Admin')){
+            $cuenta = Auth::user()->user;
+            $imagenes = Imagen::where('cuenta_user', $cuenta)->get();
 
-        return view('artista.index', compact('imagenes'));
+            return view('artista.index', compact('imagenes'));
+        }
+        return redirect()->route('admin.index');
+        
     }
 
     public function createArtista()
     {
-        return view('artista.create');
+        if(Gate::denies('es_Admin')){
+            return view('artista.create');
+        }
+        return redirect()->route('admin.index');
+        
     }
 
     /**
@@ -162,21 +175,28 @@ class CuentasController extends Controller
      * Show the form for editing the specified resource.
      */
     public function editArtista($id)
-    {
-        $imagen = Imagen::find($id);
-        return view('artista.edit', compact('imagen'));
+    {   
+        if(Gate::denies('es_Admin')){
+            $imagen = Imagen::find($id);
+            return view('artista.edit', compact('imagen'));
+        }
+        return redirect()->route('admin.index');
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function updateArtista(Request $request, $id)
+    public function updateArtista(EditarImagenRequest $request, $id)
     {
-        $imagen = Imagen::find($id);
-        $imagen->titulo = $request->titulo;
-        $imagen->save();
+        if(Gate::denies('es_Admin')){
+            $imagen = Imagen::find($id);
+            $imagen->titulo = $request->titulo;
+            $imagen->save();
 
-        return redirect()->route('artista.index');
+            return redirect()->route('artista.index');
+        }
+        return redirect()->route('admin.index');
+        
     }
 
     /**
@@ -184,10 +204,14 @@ class CuentasController extends Controller
      */
     public function destroyArtista(Imagen $imagen)
     {
-        if ($cuenta->user != Auth::user()->user) {
-            $cuenta->delete();
+        if(Gate::denies('es_Admin')){
+            if ($cuenta->user != Auth::user()->user) {
+                $cuenta->delete();
+            }
+    
+            return redirect()->route('artista.index');
         }
-
-        return redirect()->route('artista.index');
+        return redirect()->route('admin.index');
+        
     }
 }

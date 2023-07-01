@@ -31,7 +31,7 @@
                 </div>
                 {{-- botones --}}
                 <div class="mb-3 d-grid gap-2 d-lg-block">
-                    <button class="btn btn-warning" type="reset">Cancelar</button>
+                    <a href="{{route('admin.index')}}" class="btn btn-warning">Atras</a>
                     <button class="btn btn-success" type="submit">Actualizar</button>
                 </div>
             </form>
